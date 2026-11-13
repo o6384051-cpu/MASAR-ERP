@@ -29,7 +29,7 @@
 
 ## التطوير المحلي
 يتطلب تشغيل التطبيق بيئة Frappe/ERPNext متوافقة. راجع دليل المعمارية وخارطة الطريق قبل إعداد بيئة التشغيل.
-راجع أيضاً docs/offline-first-design.md وdocs/feature-parity.md.
+راجع أيضاً docs/offline-first-design.md وdocs/feature-parity.md وdocs/security-inventory-eta-cloud.md.
 
 ## مبادئ العمل
 1. لا بيانات تجريبية توهم بأنها بيانات حقيقية.
