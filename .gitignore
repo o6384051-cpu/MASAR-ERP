@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Frappe / local runtime
+sites/
+logs/
+*.log
+*.sql
+*.sql.gz
+public/files/
+private/files/
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
