@@ -69,11 +69,12 @@ def get_dashboard_data(company: str):
         )
 
     if frappe.has_permission("Bin", "read"):
+        warehouses = frappe.get_list(
+            "Warehouse", filters={"company": company}, pluck="name", limit_page_length=0
+        )
         bins = frappe.get_list(
             "Bin", fields=["item_code", "actual_qty"],
-            filters={"warehouse": ["in", frappe.get_list(
-                "Warehouse", filters={"company": company}, pluck="name", limit_page_length=0
-            )]},
+            filters={"warehouse": ["in", warehouses]} if warehouses else {"name": ["=", "__no_matching_warehouse__"]},
             limit_page_length=0,
         )
         data["inventory"] = {
