@@ -1,0 +1,20 @@
+{
+  "doctype": "Page",
+  "name": "masar-dashboard",
+  "page_name": "masar-dashboard",
+  "title": "لوحة التحكم المالية",
+  "module": "MASAR ERP",
+  "standard": "Yes",
+  "system_page": 0,
+  "roles": [
+    {
+      "role": "Accounts User"
+    },
+    {
+      "role": "Accounts Manager"
+    },
+    {
+      "role": "System Manager"
+    }
+  ]
+}
