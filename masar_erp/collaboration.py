@@ -69,6 +69,75 @@ def send_message(room: str, content: str):
     return {"name": message.name, "sent_at": message.sent_at}
 
 
+@frappe.whitelist(methods=["POST"])
+def upload_attachment(message: str):
+    """Attach a file to a message only after checking room membership."""
+    _user()
+    message_doc = frappe.get_doc("MASAR Chat Message", message)
+    room_doc = _room(message_doc.room)
+
+    uploaded = frappe.request.files.get("file")
+    if not uploaded or not uploaded.filename:
+        frappe.throw("اختر ملفاً لإرساله")
+    filename = uploaded.filename.replace("/", "_").replace("\\", "_").strip()
+    if not filename:
+        frappe.throw("اسم الملف غير صالح")
+
+    content = uploaded.stream.read()
+    if not content:
+        frappe.throw("الملف فارغ")
+    # The framework also enforces the site's configured maximum file size.
+    if len(content) > 25 * 1024 * 1024:
+        frappe.throw("الحد الأقصى لمرفق المحادثة 25 ميجابايت")
+
+    from frappe.utils.file_manager import save_file
+
+    file_doc = save_file(
+        filename,
+        content,
+        "MASAR Chat Message",
+        message_doc.name,
+        is_private=1,
+    )
+    for member in room_doc.members:
+        frappe.publish_realtime(
+            "masar_chat_attachment",
+            {"room": room_doc.name, "message": message_doc.name, "file": file_doc.name},
+            user=member.user,
+        )
+    return {
+        "name": file_doc.name,
+        "file_name": file_doc.file_name,
+        "file_url": file_doc.file_url,
+        "is_private": file_doc.is_private,
+        "attached_to_name": message_doc.name,
+    }
+
+
+@frappe.whitelist()
+def list_attachments(room: str):
+    room_doc = _room(room)
+    message_names = frappe.get_all(
+        "MASAR Chat Message",
+        filters={"room": room_doc.name},
+        pluck="name",
+        limit_page_length=5000,
+    )
+    if not message_names:
+        return []
+    # The parent messages were obtained only after membership was verified.
+    return frappe.get_all(
+        "File",
+        filters={
+            "attached_to_doctype": "MASAR Chat Message",
+            "attached_to_name": ["in", message_names],
+        },
+        fields=["name", "file_name", "file_url", "is_private", "attached_to_name", "creation"],
+        order_by="creation asc",
+        limit_page_length=5000,
+    )
+
+
 @frappe.whitelist()
 def get_messages(room: str, limit: int = 50, before: str | None = None):
     room_doc = _room(room)
