@@ -29,6 +29,10 @@ def get_dashboard_data(company: str):
         "financial": {"debit": 0, "credit": 0, "net": 0},
         "trend": [],
         "recent_invoices": [],
+        "recent_purchase_invoices": [],
+        "recent_journal_entries": [],
+        "sales": {"total": 0, "outstanding": 0},
+        "purchases": {"total": 0, "outstanding": 0},
         "inventory": {"items": 0, "quantity": 0},
     }
 
@@ -64,6 +68,30 @@ def get_dashboard_data(company: str):
             "Sales Invoice",
             filters={"company": company, "docstatus": 1},
             fields=["name", "customer", "posting_date", "grand_total", "currency", "status"],
+            order_by="posting_date desc, modified desc",
+            limit_page_length=6,
+        )
+
+    if frappe.has_permission("Purchase Invoice", "read"):
+        purchase_invoices = frappe.get_list(
+            "Purchase Invoice",
+            filters={"company": company, "docstatus": 1},
+            fields=["name", "supplier", "posting_date", "grand_total", "outstanding_amount", "currency", "status"],
+            order_by="posting_date desc, modified desc",
+            limit_page_length=6,
+        )
+        data["recent_purchase_invoices"] = purchase_invoices
+        data["purchases"] = {
+            "total": round(sum(float(row.grand_total or 0) for row in purchase_invoices), 2),
+            "outstanding": round(sum(float(row.outstanding_amount or 0) for row in purchase_invoices), 2),
+            "is_recent_sample": True,
+        }
+
+    if frappe.has_permission("Journal Entry", "read"):
+        data["recent_journal_entries"] = frappe.get_list(
+            "Journal Entry",
+            filters={"company": company, "docstatus": 1},
+            fields=["name", "posting_date", "total_debit", "total_credit", "user_remark"],
             order_by="posting_date desc, modified desc",
             limit_page_length=6,
         )
