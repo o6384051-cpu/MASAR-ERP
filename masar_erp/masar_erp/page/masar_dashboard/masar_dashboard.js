@@ -16,6 +16,10 @@ frappe.pages['masar-dashboard'].on_page_load = function (wrapper) {
         <section class="masar-kpi"><span>إجمالي الدائن</span><strong data-kpi="credit">—</strong><small>من دفتر الأستاذ العام</small></section>
         <section class="masar-kpi"><span>صافي الحركة</span><strong data-kpi="net">—</strong><small>الدائن ناقص المدين</small></section>
         <section class="masar-kpi"><span>أصناف بالمخزون</span><strong data-kpi="items">—</strong><small data-kpi="quantity">الكمية: —</small></section>
+        <section class="masar-kpi"><span>مبيعات هذا الشهر</span><strong data-kpi="sales">—</strong><small>فواتير مبيعات مرحلة</small></section>
+        <section class="masar-kpi"><span>مشتريات هذا الشهر</span><strong data-kpi="purchases">—</strong><small>فواتير مشتريات مرحلة</small></section>
+        <section class="masar-kpi"><span>ذمم العملاء المستحقة</span><strong data-kpi="receivables">—</strong><small>مستحقات فواتير الشهر</small></section>
+        <section class="masar-kpi"><span>ذمم الموردين المستحقة</span><strong data-kpi="payables">—</strong><small>مستحقات فواتير الشهر</small></section>
       </div>
       <div class="masar-dashboard-grid">
         <section class="masar-panel masar-chart-panel"><div class="masar-panel-title"><div><h3>الحركة المالية</h3><p>آخر ستة أشهر · مدين ودائن</p></div><span class="masar-live-dot">بيانات فعلية</span></div><div class="masar-chart" aria-label="رسم بياني للحركة المالية"></div><div class="masar-legend"><span class="debit-key">المدين</span><span class="credit-key">الدائن</span></div></section>
@@ -69,6 +73,10 @@ frappe.pages['masar-dashboard'].on_page_load = function (wrapper) {
         root.find('[data-kpi="credit"]').text(money(d.financial.credit,currency));
         root.find('[data-kpi="net"]').text(money(d.financial.net,currency));
         root.find('[data-kpi="items"]').text((d.inventory.items || 0).toLocaleString());
+        root.find('[data-kpi="sales"]').text(money(d.sales.month_total,currency));
+        root.find('[data-kpi="purchases"]').text(money(d.purchases.month_total,currency));
+        root.find('[data-kpi="receivables"]').text(money(d.sales.outstanding,currency));
+        root.find('[data-kpi="payables"]').text(money(d.purchases.outstanding,currency));
         root.find('[data-kpi="quantity"]').text('إجمالي الكمية: ' + (d.inventory.quantity || 0).toLocaleString());
         root.find('.masar-chart').html(d.trend && d.trend.length ? render_chart(d.trend) : '<div class="masar-empty">لا توجد حركات مالية ضمن الفترة المحددة</div>');
         const invoices = d.recent_invoices || [];
