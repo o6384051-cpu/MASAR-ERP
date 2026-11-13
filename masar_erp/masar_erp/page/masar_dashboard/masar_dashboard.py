@@ -71,6 +71,16 @@ def get_dashboard_data(company: str):
             order_by="posting_date desc, modified desc",
             limit_page_length=6,
         )
+        month_rows = frappe.get_list(
+            "Sales Invoice",
+            filters={"company": company, "docstatus": 1, "posting_date": ["between", [get_first_day(getdate(nowdate())), getdate(nowdate())]]},
+            fields=["grand_total", "outstanding_amount"],
+            limit_page_length=0,
+        )
+        data["sales"] = {
+            "month_total": round(sum(float(row.grand_total or 0) for row in month_rows), 2),
+            "outstanding": round(sum(float(row.outstanding_amount or 0) for row in month_rows), 2),
+        }
 
     if frappe.has_permission("Purchase Invoice", "read"):
         purchase_invoices = frappe.get_list(
@@ -81,10 +91,15 @@ def get_dashboard_data(company: str):
             limit_page_length=6,
         )
         data["recent_purchase_invoices"] = purchase_invoices
+        month_rows = frappe.get_list(
+            "Purchase Invoice",
+            filters={"company": company, "docstatus": 1, "posting_date": ["between", [get_first_day(getdate(nowdate())), getdate(nowdate())]]},
+            fields=["grand_total", "outstanding_amount"],
+            limit_page_length=0,
+        )
         data["purchases"] = {
-            "total": round(sum(float(row.grand_total or 0) for row in purchase_invoices), 2),
-            "outstanding": round(sum(float(row.outstanding_amount or 0) for row in purchase_invoices), 2),
-            "is_recent_sample": True,
+            "month_total": round(sum(float(row.grand_total or 0) for row in month_rows), 2),
+            "outstanding": round(sum(float(row.outstanding_amount or 0) for row in month_rows), 2),
         }
 
     if frappe.has_permission("Journal Entry", "read"):
