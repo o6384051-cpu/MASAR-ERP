@@ -1,0 +1,97 @@
+{
+  "doctype": "DocType",
+  "name": "MASAR Account Mapping",
+  "module": "MASAR ERP",
+  "autoname": "hash",
+  "naming_rule": "Random",
+  "allow_rename": 0,
+  "track_changes": 1,
+  "engine": "InnoDB",
+  "istable": 0,
+  "issingle": 0,
+  "is_submittable": 0,
+  "editable_grid": 0,
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "fields": [
+    {
+      "fieldname": "company",
+      "label": "الشركة",
+      "fieldtype": "Link",
+      "options": "Company",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "mapping_type",
+      "label": "نوع التوجيه",
+      "fieldtype": "Select",
+      "reqd": 1,
+      "in_list_view": 1,
+      "options": "Sales Income\nSales Receivable\nSales Tax\nSales Discount\nPurchase Expense\nPurchase Payable\nPurchase Tax\nInventory Asset\nCost of Goods Sold\nCash\nBank\nPayroll Expense\nPayroll Payable\nMarketing Expense\nPetty Cash\nFuel Expense\nMaintenance Expense"
+    },
+    {
+      "fieldname": "account",
+      "label": "الحساب",
+      "fieldtype": "Link",
+      "options": "Account",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "cost_center",
+      "label": "مركز التكلفة",
+      "fieldtype": "Link",
+      "options": "Cost Center"
+    },
+    {
+      "fieldname": "active",
+      "label": "نشط",
+      "fieldtype": "Check",
+      "default": "1",
+      "in_list_view": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "Accounts Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 0,
+      "report": 1,
+      "export": 0,
+      "share": 0,
+      "print": 1,
+      "email": 0
+    },
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 0,
+      "report": 1,
+      "export": 0,
+      "share": 0,
+      "print": 1,
+      "email": 0
+    },
+    {
+      "role": "Accounts User",
+      "read": 1,
+      "write": 0,
+      "create": 0,
+      "delete": 0,
+      "report": 1,
+      "export": 0,
+      "share": 0,
+      "print": 1,
+      "email": 0
+    }
+  ],
+  "actions": [],
+  "links": [],
+  "states": [],
+  "__unsaved": 1
+}
