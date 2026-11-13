@@ -19,7 +19,7 @@ frappe.pages['masar-dashboard'].on_page_load = function (wrapper) {
         <section class="masar-kpi"><span>مبيعات هذا الشهر</span><strong data-kpi="sales">—</strong><small>فواتير مبيعات مرحلة</small></section>
         <section class="masar-kpi"><span>مشتريات هذا الشهر</span><strong data-kpi="purchases">—</strong><small>فواتير مشتريات مرحلة</small></section>
         <section class="masar-kpi"><span>ذمم العملاء المستحقة</span><strong data-kpi="receivables">—</strong><small>إجمالي الذمم المفتوحة</small></section>
-        <section class="masar-kpi"><span>ذمم الموردين المستحقة</span><strong data-kpi="payables">—</strong><small>مستحقات فواتير الشهر</small></section>
+        <section class="masar-kpi"><span>ذمم الموردين المستحقة</span><strong data-kpi="payables">—</strong><small>إجمالي الذمم المفتوحة</small></section>
       </div>
       <div class="masar-dashboard-grid">
         <section class="masar-panel masar-chart-panel"><div class="masar-panel-title"><div><h3>الحركة المالية</h3><p>آخر ستة أشهر · مدين ودائن</p></div><span class="masar-live-dot">بيانات فعلية</span></div><div class="masar-chart" aria-label="رسم بياني للحركة المالية"></div><div class="masar-legend"><span class="debit-key">المدين</span><span class="credit-key">الدائن</span></div></section>
