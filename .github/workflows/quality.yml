@@ -15,6 +15,11 @@ jobs:
           python-version: "3.11"
       - name: Compile Python files
         run: python -m compileall -q masar_erp setup.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Check dashboard JavaScript syntax
+        run: node --check masar_erp/masar_erp/page/masar_dashboard/masar_dashboard.js
       - name: Install test runner
         run: python -m pip install pytest
       - name: Run package smoke tests
