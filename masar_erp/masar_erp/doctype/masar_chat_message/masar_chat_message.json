@@ -5,53 +5,14 @@
   "custom": 0,
   "autoname": "hash",
   "track_changes": 1,
-  "field_order": [
-    "room",
-    "sender",
-    "sent_at",
-    "content"
-  ],
+  "field_order": ["room", "sender", "sent_at", "content"],
   "fields": [
-    {
-      "fieldname": "room",
-      "fieldtype": "Link",
-      "label": "Conversation",
-      "options": "MASAR Chat Room",
-      "reqd": 1,
-      "in_list_view": 1
-    },
-    {
-      "fieldname": "sender",
-      "fieldtype": "Link",
-      "label": "Sender",
-      "options": "User",
-      "reqd": 1,
-      "in_list_view": 1
-    },
-    {
-      "fieldname": "sent_at",
-      "fieldtype": "Datetime",
-      "label": "Sent at",
-      "reqd": 1,
-      "in_list_view": 1
-    },
-    {
-      "fieldname": "content",
-      "fieldtype": "Text Editor",
-      "label": "Message",
-      "reqd": 1
-    }
+    {"fieldname": "room", "fieldtype": "Link", "label": "Conversation", "options": "MASAR Chat Room", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "sender", "fieldtype": "Link", "label": "Sender", "options": "User", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "sent_at", "fieldtype": "Datetime", "label": "Sent at", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "content", "fieldtype": "Text", "label": "Message", "reqd": 1}
   ],
   "permissions": [
-    {
-      "role": "System Manager",
-      "read": 1,
-      "write": 1,
-      "create": 1,
-      "delete": 0,
-      "report": 1,
-      "export": 0,
-      "share": 0
-    }
+    {"role": "System Manager", "read": 1, "write": 1, "create": 1, "delete": 0, "report": 1, "export": 0, "share": 0, "print": 1, "email": 0}
   ]
 }
