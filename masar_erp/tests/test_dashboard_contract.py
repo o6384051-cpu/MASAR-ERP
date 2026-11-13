@@ -56,3 +56,22 @@ def test_dashboard_has_mobile_responsive_layout():
     source = (PAGE / "masar_dashboard.css").read_text(encoding="utf-8")
     assert "@media(max-width:900px)" in source
     assert "@media(max-width:520px)" in source
+
+
+def test_reconciliation_endpoint_is_read_only_and_company_scoped():
+    path = ROOT / "masar_erp" / "reconciliation.py"
+    source = path.read_text(encoding="utf-8")
+    tree = ast.parse(source)
+    endpoint = next(
+        node for node in tree.body
+        if isinstance(node, ast.FunctionDef) and node.name == "get_gl_reconciliation"
+    )
+    body = ast.unparse(endpoint)
+    assert "frappe.session.user == 'Guest'" in body
+    assert "_authorized_company(company)" in body
+    assert "frappe.has_permission" in body
+    assert "frappe.get_list" in body
+    assert "frappe.get_all" not in body
+    assert "frappe.db.sql" not in body
+    assert "balanced" in body
+    assert "difference" in body
