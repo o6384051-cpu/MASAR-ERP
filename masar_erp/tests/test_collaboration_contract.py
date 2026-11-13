@@ -30,4 +30,4 @@ def test_ai_fails_closed_and_does_not_forward_untrusted_context():
     source = (ROOT / "ai_assistant.py").read_text(encoding="utf-8")
     assert "frappe.conf.get" in source
     assert "not_configured" in source
-    assert "context is intentionally not forwarded" in source
+    assert "not forwarded or trusted" in source
