@@ -22,6 +22,8 @@ class MasarAccountMapping(Document):
             cost_center = frappe.get_doc("Cost Center", self.cost_center)
             if cost_center.company != self.company:
                 frappe.throw("يجب أن ينتمي مركز التكلفة إلى الشركة المحددة", frappe.ValidationError)
+            if cost_center.is_group or cost_center.disabled:
+                frappe.throw("يجب اختيار مركز تكلفة تفصيلي ونشط", frappe.ValidationError)
 
         existing = frappe.get_all(
             "MASAR Account Mapping",
@@ -30,4 +32,4 @@ class MasarAccountMapping(Document):
             limit_page_length=2,
         )
         if any(name != self.name for name in existing):
-            frappe.throw("يوجد توجيه نشط أو محفوظ لهذا النوع في الشركة", frappe.ValidationError)
+            frappe.throw("يوجد توجيه محفوظ لهذا النوع في الشركة", frappe.ValidationError)
