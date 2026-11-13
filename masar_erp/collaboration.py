@@ -38,7 +38,8 @@ def send_message(room: str, content: str):
         frappe.throw("الرسالة أطول من الحد المسموح")
     message = frappe.get_doc({"doctype": "MASAR Chat Message", "room": room_doc.name, "sender": user, "content": content, "sent_at": now_datetime()})
     message.insert(ignore_permissions=True)
-    frappe.publish_realtime("masar_chat_message", {"room": room_doc.name, "message": message.name}, user=[row.user for row in room_doc.members])
+    for member in room_doc.members:
+        frappe.publish_realtime("masar_chat_message", {"room": room_doc.name, "message": message.name}, user=member.user)
     return {"name": message.name, "sent_at": message.sent_at}
 
 @frappe.whitelist()
