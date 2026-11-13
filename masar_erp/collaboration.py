@@ -82,6 +82,14 @@ def upload_attachment(message: str):
     filename = uploaded.filename.replace("/", "_").replace("\\", "_").strip()
     if not filename:
         frappe.throw("اسم الملف غير صالح")
+    allowed_extensions = {
+        "pdf", "png", "jpg", "jpeg", "webp", "gif", "txt", "csv",
+        "doc", "docx", "xls", "xlsx", "ppt", "pptx", "odt", "ods",
+        "odp", "rtf", "zip", "mp3", "mp4", "mov",
+    }
+    extension = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+    if extension not in allowed_extensions:
+        frappe.throw("نوع الملف غير مسموح به في محادثات MASAR")
 
     content = uploaded.stream.read()
     if not content:
