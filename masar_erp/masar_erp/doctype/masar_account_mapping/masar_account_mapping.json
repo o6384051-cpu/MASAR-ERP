@@ -3,7 +3,6 @@
   "name": "MASAR Account Mapping",
   "module": "MASAR ERP",
   "autoname": "hash",
-  "naming_rule": "Random",
   "allow_rename": 0,
   "track_changes": 1,
   "engine": "InnoDB",
@@ -93,5 +92,11 @@
   "actions": [],
   "links": [],
   "states": [],
-  "__unsaved": 1
+  "field_order": [
+    "company",
+    "mapping_type",
+    "account",
+    "cost_center",
+    "active"
+  ]
 }
