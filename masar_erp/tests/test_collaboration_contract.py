@@ -17,6 +17,9 @@ def test_room_listing_uses_permission_aware_query():
     assert "def _room(" in source
     assert "frappe.PermissionError" in source
     assert "frappe.publish_realtime" in source
+    assert "def upload_attachment(" in source
+    assert "is_private=1" in source
+    assert "def list_attachments(" in source
 
 
 def test_membership_does_not_grant_room_or_message_mutations():
