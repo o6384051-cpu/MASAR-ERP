@@ -18,7 +18,7 @@ frappe.pages['masar-dashboard'].on_page_load = function (wrapper) {
         <section class="masar-kpi"><span>أصناف بالمخزون</span><strong data-kpi="items">—</strong><small data-kpi="quantity">الكمية: —</small></section>
         <section class="masar-kpi"><span>مبيعات هذا الشهر</span><strong data-kpi="sales">—</strong><small>فواتير مبيعات مرحلة</small></section>
         <section class="masar-kpi"><span>مشتريات هذا الشهر</span><strong data-kpi="purchases">—</strong><small>فواتير مشتريات مرحلة</small></section>
-        <section class="masar-kpi"><span>ذمم العملاء المستحقة</span><strong data-kpi="receivables">—</strong><small>مستحقات فواتير الشهر</small></section>
+        <section class="masar-kpi"><span>ذمم العملاء المستحقة</span><strong data-kpi="receivables">—</strong><small>إجمالي الذمم المفتوحة</small></section>
         <section class="masar-kpi"><span>ذمم الموردين المستحقة</span><strong data-kpi="payables">—</strong><small>مستحقات فواتير الشهر</small></section>
       </div>
       <div class="masar-dashboard-grid">
