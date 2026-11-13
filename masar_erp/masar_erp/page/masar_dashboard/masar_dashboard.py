@@ -47,7 +47,7 @@ def get_dashboard_data(company: str):
         )
         monthly = {}
         for row in entries:
-            key = row.posting_date.strftime("%Y-%m")
+            key = getdate(row.posting_date).strftime("%Y-%m")
             bucket = monthly.setdefault(key, {"debit": 0, "credit": 0})
             bucket["debit"] += float(row.debit or 0)
             bucket["credit"] += float(row.credit or 0)
