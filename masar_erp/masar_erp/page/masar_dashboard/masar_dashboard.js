@@ -62,12 +62,15 @@ frappe.pages['masar-dashboard'].on_page_load = function (wrapper) {
     const labels = points.map((p,i)=>`<text x="${x(i)}" y="220" text-anchor="middle">${escape(p.month.slice(5))}</text>`).join('');
     return `<svg viewBox="0 0 ${width} ${height}" role="img"><defs><linearGradient id="masarDebit" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2c6fbd" stop-opacity=".25"/><stop offset="1" stop-color="#2c6fbd" stop-opacity="0"/></linearGradient><linearGradient id="masarCredit" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#31a77b" stop-opacity=".2"/><stop offset="1" stop-color="#31a77b" stop-opacity="0"/></linearGradient></defs><path d="${area('debit')}" fill="url(#masarDebit)"/><path d="${area('credit')}" fill="url(#masarCredit)"/><path d="${line('debit')}" fill="none" stroke="#2c6fbd" stroke-width="3" stroke-linecap="round"/><path d="${line('credit')}" fill="none" stroke="#31a77b" stroke-width="3" stroke-linecap="round"/>${labels}</svg>`;
   }
+  let activeRequest = 0;
   function load_dashboard() {
     const selected = company.get_value();
     if (!selected) return;
+    const requestId = ++activeRequest;
     root.find('.masar-panel').addClass('masar-loading');
     frappe.call({method:'masar_erp.masar_erp.page.masar_dashboard.masar_dashboard.get_dashboard_data', args:{company:selected}})
       .then(r => {
+        if (requestId !== activeRequest) return;
         const d = r.message || {}, currency = d.currency || 'EGP';
         root.find('[data-kpi="debit"]').text(money(d.financial.debit,currency));
         root.find('[data-kpi="credit"]').text(money(d.financial.credit,currency));
@@ -80,13 +83,13 @@ frappe.pages['masar-dashboard'].on_page_load = function (wrapper) {
         root.find('[data-kpi="quantity"]').text('إجمالي الكمية: ' + (d.inventory.quantity || 0).toLocaleString());
         root.find('.masar-chart').html(d.trend && d.trend.length ? render_chart(d.trend) : '<div class="masar-empty">لا توجد حركات مالية ضمن الفترة المحددة</div>');
         const invoices = d.recent_invoices || [];
-        root.find('.masar-invoices').html(invoices.length ? invoices.map(inv => \`<div class="masar-invoice" data-open-doctype="Sales Invoice" data-open-name="\${escape(inv.name)}"><div><b>\${escape(inv.customer)}</b><small>\${escape(inv.name)} · \${escape(inv.posting_date)}</small></div><strong>\${money(inv.base_grand_total,currency)}</strong></div>\`).join('') : '<div class="masar-empty">لا توجد فواتير مبيعات متاحة</div>');
+        root.find('.masar-invoices').html(invoices.length ? invoices.map(inv => `<div class="masar-invoice" data-open-doctype="Sales Invoice" data-open-name="${escape(inv.name)}"><div><b>${escape(inv.customer)}</b><small>${escape(inv.name)} · ${escape(inv.posting_date)}</small></div><strong>${money(inv.base_grand_total,currency)}</strong></div>`).join('') : '<div class="masar-empty">لا توجد فواتير مبيعات متاحة</div>');
         const purchases = d.recent_purchase_invoices || [];
-        root.find('.masar-purchases').html(purchases.length ? purchases.map(inv => \`<div class="masar-invoice" data-open-doctype="Purchase Invoice" data-open-name="\${escape(inv.name)}"><div><b>\${escape(inv.supplier)}</b><small>\${escape(inv.name)} · \${escape(inv.posting_date)}</small></div><strong>\${money(inv.base_grand_total,currency)}</strong></div>\`).join('') : '<div class="masar-empty">لا توجد فواتير مشتريات متاحة</div>');
+        root.find('.masar-purchases').html(purchases.length ? purchases.map(inv => `<div class="masar-invoice" data-open-doctype="Purchase Invoice" data-open-name="${escape(inv.name)}"><div><b>${escape(inv.supplier)}</b><small>${escape(inv.name)} · ${escape(inv.posting_date)}</small></div><strong>${money(inv.base_grand_total,currency)}</strong></div>`).join('') : '<div class="masar-empty">لا توجد فواتير مشتريات متاحة</div>');
         const journals = d.recent_journal_entries || [];
-        root.find('.masar-journals').html(journals.length ? journals.map(entry => \`<div class="masar-invoice" data-open-doctype="Journal Entry" data-open-name="\${escape(entry.name)}"><div><b>\${escape(entry.name)}</b><small>\${escape(entry.posting_date)} · \${escape(entry.user_remark || 'قيد يومية')}</small></div><strong>\${money(entry.total_debit,currency)}</strong></div>\`).join('') : '<div class="masar-empty">لا توجد قيود يومية متاحة</div>');
+        root.find('.masar-journals').html(journals.length ? journals.map(entry => `<div class="masar-invoice" data-open-doctype="Journal Entry" data-open-name="${escape(entry.name)}"><div><b>${escape(entry.name)}</b><small>${escape(entry.posting_date)} · ${escape(entry.user_remark || 'قيد يومية')}</small></div><strong>${money(entry.total_debit,currency)}</strong></div>`).join('') : '<div class="masar-empty">لا توجد قيود يومية متاحة</div>');
       })
-      .catch(() => frappe.msgprint(__('تعذر تحميل بيانات اللوحة. تحقق من صلاحياتك واتصال الخادم.')))
-      .finally(() => root.find('.masar-panel').removeClass('masar-loading'));
+      .catch(() => { if (requestId === activeRequest) frappe.msgprint(__('تعذر تحميل بيانات اللوحة. تحقق من صلاحياتك واتصال الخادم.')); })
+      .finally(() => { if (requestId === activeRequest) root.find('.masar-panel').removeClass('masar-loading'); });
   }
 };
