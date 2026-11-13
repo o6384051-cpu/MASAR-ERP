@@ -8,16 +8,8 @@ import frappe
 
 
 ACCOUNT_FIELDS = [
-    "name",
-    "account_name",
-    "parent_account",
-    "root_type",
-    "report_type",
-    "account_type",
-    "is_group",
-    "disabled",
-    "lft",
-    "rgt",
+    "name", "account_name", "parent_account", "root_type", "report_type",
+    "account_type", "is_group", "disabled", "lft", "rgt",
 ]
 
 
@@ -44,29 +36,19 @@ def get_chart_of_accounts(company: str):
         frappe.throw("ليس لديك صلاحية قراءة دليل الحسابات", frappe.PermissionError)
 
     return frappe.get_list(
-        "Account",
-        filters={"company": company},
-        fields=ACCOUNT_FIELDS,
-        order_by="lft asc, name asc",
-        limit_page_length=0,
+        "Account", filters={"company": company}, fields=ACCOUNT_FIELDS,
+        order_by="lft asc, name asc", limit_page_length=0,
     )
 
 
 @frappe.whitelist()
 def create_account(
-    company: str,
-    account_name: str,
-    parent_account: str,
-    is_group: int = 0,
-    account_type: str | None = None,
+    company: str, account_name: str, parent_account: str,
+    is_group: int = 0, account_type: str | None = None,
 ):
-    """Create a child account through ERPNext's normal validation and insert path.
-
-    Root accounts and direct ledger mutations are intentionally not exposed here.
-    """
+    """Create a child account through ERPNext's normal validation and insert path."""
     _require_authenticated_user()
     _get_authorized_company(company)
-
     if not frappe.has_permission("Account", "create"):
         frappe.throw("ليس لديك صلاحية إنشاء حساب", frappe.PermissionError)
 
@@ -76,7 +58,6 @@ def create_account(
         frappe.throw("اسم الحساب مطلوب", frappe.ValidationError)
     if not parent_account:
         frappe.throw("يجب اختيار الحساب الأب", frappe.ValidationError)
-
     try:
         is_group = int(is_group)
     except (TypeError, ValueError):
@@ -93,23 +74,32 @@ def create_account(
         frappe.throw("لا يمكن إضافة حساب تحت حساب أب معطل", frappe.ValidationError)
 
     values = {
-        "doctype": "Account",
-        "account_name": account_name,
-        "company": company,
-        "parent_account": parent_account,
-        "is_group": is_group,
+        "doctype": "Account", "account_name": account_name, "company": company,
+        "parent_account": parent_account, "is_group": is_group,
     }
     if account_type and not is_group:
         values["account_type"] = account_type.strip()
-
     account = frappe.get_doc(values)
     account.insert()
     return {
-        "name": account.name,
-        "account_name": account.account_name,
-        "parent_account": account.parent_account,
-        "company": account.company,
-        "is_group": account.is_group,
-        "root_type": account.root_type,
+        "name": account.name, "account_name": account.account_name,
+        "parent_account": account.parent_account, "company": account.company,
+        "is_group": account.is_group, "root_type": account.root_type,
         "report_type": account.report_type,
     }
+
+
+@frappe.whitelist()
+def get_account_mappings(company: str):
+    """List configured posting accounts for one authorized company."""
+    _require_authenticated_user()
+    _get_authorized_company(company)
+    if not frappe.has_permission("MASAR Account Mapping", "read"):
+        frappe.throw("ليس لديك صلاحية قراءة توجيهات الحسابات", frappe.PermissionError)
+    return frappe.get_list(
+        "MASAR Account Mapping",
+        filters={"company": company},
+        fields=["name", "company", "mapping_type", "account", "cost_center", "active"],
+        order_by="mapping_type asc",
+        limit_page_length=0,
+    )
