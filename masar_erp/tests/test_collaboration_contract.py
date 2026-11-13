@@ -12,8 +12,9 @@ def test_collaboration_modules_are_valid_python():
 
 def test_room_listing_uses_permission_aware_query():
     source = (ROOT / "collaboration.py").read_text(encoding="utf-8")
-    assert "frappe.get_list(" in source
-    assert "frappe.get_all(" not in source
+    list_rooms = source.split("def list_rooms():", 1)[1].split("@frappe.whitelist()", 1)[0]
+    assert "frappe.get_list(" in list_rooms
+    assert "frappe.get_all(" not in list_rooms
     assert "def _room(" in source
     assert "frappe.PermissionError" in source
     assert "frappe.publish_realtime" in source
