@@ -19,6 +19,8 @@ def test_room_listing_uses_permission_aware_query():
     assert "frappe.publish_realtime" in source
     assert "def upload_attachment(" in source
     assert "is_private=1" in source
+    assert "allowed_extensions" in source
+    assert "25 * 1024 * 1024" in source
     assert "def list_attachments(" in source
 
 
