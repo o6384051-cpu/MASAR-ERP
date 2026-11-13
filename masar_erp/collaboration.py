@@ -125,7 +125,7 @@ def upload_attachment(message: str):
 @frappe.whitelist()
 def list_attachments(room: str):
     room_doc = _room(room)
-    message_names = frappe.get_all(
+    message_names = frappe.get_list(
         "MASAR Chat Message",
         filters={"room": room_doc.name},
         pluck="name",
@@ -133,8 +133,8 @@ def list_attachments(room: str):
     )
     if not message_names:
         return []
-    # The parent messages were obtained only after membership was verified.
-    return frappe.get_all(
+    # get_list enforces File read permissions in addition to the room-membership check.
+    return frappe.get_list(
         "File",
         filters={
             "attached_to_doctype": "MASAR Chat Message",
