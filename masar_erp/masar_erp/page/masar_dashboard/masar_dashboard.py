@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import frappe
 from frappe import _
-from frappe.utils import add_months, get_first_day, get_last_day, getdate, nowdate
+from frappe.utils import add_months, get_first_day, getdate, nowdate
 
 
 def _company(company: str):
@@ -62,7 +62,7 @@ def get_dashboard_data(company: str):
     if frappe.has_permission("Sales Invoice", "read"):
         data["recent_invoices"] = frappe.get_list(
             "Sales Invoice",
-            filters={"company": company, "docstatus": ["<", 2]},
+            filters={"company": company, "docstatus": 1},
             fields=["name", "customer", "posting_date", "grand_total", "currency", "status"],
             order_by="posting_date desc, modified desc",
             limit_page_length=6,
