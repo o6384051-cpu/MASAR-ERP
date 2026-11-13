@@ -58,7 +58,7 @@ frappe.pages['masar-dashboard'].on_page_load = function (wrapper) {
     const selected = company.get_value();
     if (!selected) return;
     root.find('.masar-panel').addClass('masar-loading');
-    frappe.call({method:'masar_erp.mas ar_erp.page.mas ar_dashboard.mas ar_dashboard.get_dashboard_data'.replaceAll(' ',''), args:{company:selected}})
+    frappe.call({method:'masar_erp.masar_erp.page.masar_dashboard.masar_dashboard.get_dashboard_data, args:{company:selected}})
       .then(r => {
         const d = r.message || {}, currency = d.currency || 'EGP';
         root.find('[data-kpi="debit"]').text(money(d.financial.debit,currency));
