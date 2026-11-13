@@ -31,8 +31,8 @@ def get_dashboard_data(company: str):
         "recent_invoices": [],
         "recent_purchase_invoices": [],
         "recent_journal_entries": [],
-        "sales": {"total": 0, "outstanding": 0},
-        "purchases": {"total": 0, "outstanding": 0},
+        "sales": {"month_total": 0, "outstanding": 0},
+        "purchases": {"month_total": 0, "outstanding": 0},
         "inventory": {"items": 0, "quantity": 0},
     }
 
@@ -74,12 +74,18 @@ def get_dashboard_data(company: str):
         month_rows = frappe.get_list(
             "Sales Invoice",
             filters={"company": company, "docstatus": 1, "posting_date": ["between", [get_first_day(getdate(nowdate())), getdate(nowdate())]]},
-            fields=["base_grand_total", "base_outstanding_amount"],
+            fields=["base_grand_total"],
+            limit_page_length=0,
+        )
+        open_rows = frappe.get_list(
+            "Sales Invoice",
+            filters={"company": company, "docstatus": 1, "outstanding_amount": [">", 0]},
+            fields=["base_outstanding_amount"],
             limit_page_length=0,
         )
         data["sales"] = {
             "month_total": round(sum(float(row.base_grand_total or 0) for row in month_rows), 2),
-            "outstanding": round(sum(float(row.base_outstanding_amount or 0) for row in month_rows), 2),
+            "outstanding": round(sum(float(row.base_outstanding_amount or 0) for row in open_rows), 2),
         }
 
     if frappe.has_permission("Purchase Invoice", "read"):
@@ -94,12 +100,18 @@ def get_dashboard_data(company: str):
         month_rows = frappe.get_list(
             "Purchase Invoice",
             filters={"company": company, "docstatus": 1, "posting_date": ["between", [get_first_day(getdate(nowdate())), getdate(nowdate())]]},
-            fields=["grand_total", "outstanding_amount"],
+            fields=["base_grand_total"],
+            limit_page_length=0,
+        )
+        open_rows = frappe.get_list(
+            "Purchase Invoice",
+            filters={"company": company, "docstatus": 1, "outstanding_amount": [">", 0]},
+            fields=["base_outstanding_amount"],
             limit_page_length=0,
         )
         data["purchases"] = {
-            "month_total": round(sum(float(row.grand_total or 0) for row in month_rows), 2),
-            "outstanding": round(sum(float(row.outstanding_amount or 0) for row in month_rows), 2),
+            "month_total": round(sum(float(row.base_grand_total or 0) for row in month_rows), 2),
+            "outstanding": round(sum(float(row.base_outstanding_amount or 0) for row in open_rows), 2),
         }
 
     if frappe.has_permission("Journal Entry", "read"):
